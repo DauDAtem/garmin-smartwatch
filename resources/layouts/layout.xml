@@ -27,7 +27,7 @@
     <bitmap id="heartrate_icon" 
         x="18%"
         y="30%"
-        filename="../drawables/heartrate_icon.png" />
+        filename="../drawables/heartrate_icon_red.png" />
     
     <!-- Distance -->
     <label id="distance_text" 
