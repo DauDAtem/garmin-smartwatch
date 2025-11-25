@@ -3,8 +3,6 @@ import Toybox.WatchUi;
 import Toybox.Activity;
 import Toybox.Lang;
 import Toybox.Timer;
-import Toybox.Attention;
-import Toybox.Application;
 import Toybox.System;
 
 class TestingCadenceView extends WatchUi.View {
@@ -14,10 +12,16 @@ class TestingCadenceView extends WatchUi.View {
     private var _heartrateDisplay;
     private var _distanceDisplay;
     private var _timeDisplay;
-    private var _zoneIndicator;
-    private var _previousCadence = null;
-    private var _wasOutOfZone = false;
-    private var _lastVibrateTime = 0;
+    private var _cadenceZoneDisplay;
+    private var _lastZoneState = 0; // -1 = below, 0 = inside, 1 = above
+    private var _vibeTimer = new Timer.Timer();
+
+    function _secondVibe() as Void {
+        // Haptics not available on this target SDK/device in this workspace.
+        // Replace the println below with the device vibration call when supported,
+        // e.g. `Haptics.vibrate(120)` or `System.vibrate(120)` on SDKs that provide it.
+        System.println("[vibe] second pulse");
+    }
 
     function initialize() {
         View.initialize();
@@ -30,10 +34,10 @@ class TestingCadenceView extends WatchUi.View {
     function onLayout(dc as Dc) as Void {
         setLayout(Rez.Layouts.MainLayout(dc));
         _cadenceDisplay = findDrawableById("cadence_text");
+        _cadenceZoneDisplay = findDrawableById("cadence_zone");
         _heartrateDisplay = findDrawableById("heartrate_text");
         _distanceDisplay = findDrawableById("distance_text");
         _timeDisplay = findDrawableById("time_text");
-        _zoneIndicator = findDrawableById("zone_indicator");
     }
 
     // Called when this View is brought to the foreground. Restore
@@ -62,45 +66,57 @@ class TestingCadenceView extends WatchUi.View {
 
     function displayCadence() as Void{
         var info = Activity.getActivityInfo();
-        var app = Application.getApp();
-        var minCadence = app.getProperty("minCadence");
-        var maxCadence = app.getProperty("maxCadence");
         
-        // Set default values if properties are null
-        if (minCadence == null) {
-            minCadence = 160;
-        }
-        if (maxCadence == null) {
-            maxCadence = 180;
-        }
 
         if (info != null && info.currentCadence != null){
-            var currentCadence = info.currentCadence;
-            _cadenceDisplay.setText(currentCadence.toString());
-            
-            // Check if cadence is in zone
-            var isInZone = (currentCadence >= minCadence && currentCadence <= maxCadence);
-            
-            // Update zone indicator
-            if (isInZone) {
-                _zoneIndicator.setText("IN ZONE");
-                _zoneIndicator.setColor(Graphics.COLOR_GREEN);
-                _wasOutOfZone = false;
-            } else if (currentCadence < minCadence) {
-                _zoneIndicator.setText("TOO LOW");
-                _zoneIndicator.setColor(Graphics.COLOR_RED);
-                checkAndVibrate(false); // false = below zone
-            } else {
-                _zoneIndicator.setText("TOO HIGH");
-                _zoneIndicator.setColor(Graphics.COLOR_ORANGE);
-                checkAndVibrate(true); // true = above zone
-            }
-            
-            _previousCadence = currentCadence;
+            _cadenceDisplay.setText(info.currentCadence.toString());
         }else{
             _cadenceDisplay.setText("--");
-            _zoneIndicator.setText("NO DATA");
-            _zoneIndicator.setColor(Graphics.COLOR_LT_GRAY);
+        }
+
+        // Show whether current cadence is inside configured zone
+        var minZone = getApp().getMinCadence();
+        var maxZone = getApp().getMaxCadence();
+        var zoneText = "";
+        if (info != null && info.currentCadence != null) {
+            var c = info.currentCadence;
+            if (c >= minZone && c <= maxZone) {
+                zoneText = (WatchUi.loadResource(Rez.Strings.zone_in) as String) + " (" + minZone.toString() + "-" + maxZone.toString() + ")";
+            } else {
+                zoneText = (WatchUi.loadResource(Rez.Strings.zone_out) as String) + " (" + minZone.toString() + "-" + maxZone.toString() + ")";
+            }
+        } else {
+            zoneText = "(" + minZone.toString() + "-" + maxZone.toString() + ")";
+        }
+        if (_cadenceZoneDisplay != null) {
+            _cadenceZoneDisplay.setText(zoneText);
+        }
+
+        // Trigger haptic on zone crossing: single when falling below min, double when going above max
+        var newZoneState = 0;
+        if (info != null && info.currentCadence != null) {
+            var c = info.currentCadence;
+            if (c < minZone) {
+                newZoneState = -1;
+            } else if (c > maxZone) {
+                newZoneState = 1;
+            } else {
+                newZoneState = 0;
+            }
+        }
+
+        if (newZoneState != _lastZoneState) {
+            if (newZoneState == -1) {
+                // single short vibration
+                // single pulse (placeholder)
+                System.println("[vibe] single pulse (below min)");
+            } else if (newZoneState == 1) {
+                // double short vibration: second pulse scheduled
+                // first pulse (placeholder)
+                System.println("[vibe] first pulse (above max)");
+                _vibeTimer.start(method(:_secondVibe), 240, false);
+            }
+            _lastZoneState = newZoneState;
         }
 
         if (info != null && info.currentHeartRate != null){
@@ -128,26 +144,6 @@ class TestingCadenceView extends WatchUi.View {
             _timeDisplay.setText("--:--:--");
         }
         
-    }
-
-    function checkAndVibrate(isAboveZone as Boolean) as Void {
-        var currentTime = System.getTimer();
-        
-        // Only vibrate if:
-        // 1. We weren't already out of zone (just went out)
-        // 2. Or if it's been more than 10 seconds since last vibration
-        if (!_wasOutOfZone || (currentTime - _lastVibrateTime) > 10000) {
-            if (Attention has :vibrate) {
-                var vibrateData = [
-                    new Attention.VibeProfile(50, 200),  // 50% intensity for 200ms
-                    new Attention.VibeProfile(0, 100),   // Pause for 100ms
-                    new Attention.VibeProfile(50, 200)   // 50% intensity for 200ms
-                ];
-                Attention.vibrate(vibrateData);
-            }
-            _lastVibrateTime = currentTime;
-            _wasOutOfZone = true;
-        }
     }
 
 }

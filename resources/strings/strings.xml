@@ -3,6 +3,13 @@
 
     <string id="prompt">Click the menu button</string>
 
-    <string id="menu_min_cadence">Set Min Cadence</string>
-    <string id="menu_max_cadence">Set Max Cadence</string>
+    <string id="menu_label_1">Item 1</string>
+    <string id="menu_label_2">Item 2</string>
+    <string id="menu_inc_min">Increase Min Cadence</string>
+    <string id="menu_dec_min">Decrease Min Cadence</string>
+    <string id="menu_inc_max">Increase Max Cadence</string>
+    <string id="menu_dec_max">Decrease Max Cadence</string>
+    <string id="menu_reset_zones">Reset Cadence Zones</string>
+    <string id="zone_in">In Zone</string>
+    <string id="zone_out">Out of Zone</string>
 </strings>

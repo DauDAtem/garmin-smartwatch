@@ -1,49 +1,47 @@
 <layout id="MainLayout" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
-    <!-- Zone Indicator at top -->
-    <label id="zone_indicator" 
-        x="50%" 
-        y="5%" 
-        font="Gfx.FONT_SMALL" 
-        justification="Gfx.TEXT_JUSTIFY_CENTER" 
-        color="Gfx.COLOR_WHITE" />
-    
     <!-- Cadence -->
     <label id="cadence_text" 
         x="60%" 
-        y="15%" 
-        font="Gfx.FONT_NUMBER_MEDIUM" 
+        y="6%" 
+        font="Gfx.FONT_XTINY" 
         justification="Gfx.TEXT_JUSTIFY_CENTER" 
+        color="Gfx.COLOR_GREEN" />
+    <label id="cadence_zone"
+        x="60%"
+        y="14%"
+        font="Gfx.FONT_XTINY"
+        justification="Gfx.TEXT_JUSTIFY_CENTER"
         color="Gfx.COLOR_WHITE" />
     <bitmap id="cadence_icon" 
-        x="20%"
-        y="20%"
+        x="18%"
+        y="10%"
         filename="../drawables/cadence_icon.png" />
     
     <!-- Heart Rate -->
     <label id="heartrate_text" 
         x="60%" 
-        y="38%" 
-        font="Gfx.FONT_NUMBER_MEDIUM" 
+        y="26%" 
+        font="Gfx.FONT_XTINY" 
         justification="Gfx.TEXT_JUSTIFY_CENTER" 
-        color="Gfx.COLOR_WHITE" />
+        color="Gfx.COLOR_DK_RED" />
     <bitmap id="heartrate_icon" 
-        x="20%"
-        y="43%"
-        filename="../drawables/heartrate_icon.png" />
+        x="18%"
+        y="30%"
+        filename="../drawables/heartrate_icon_red.png" />
     
     <!-- Distance -->
     <label id="distance_text" 
-        x="50%" 
-        y="62%" 
-        font="Gfx.FONT_MEDIUM" 
+        x="60%" 
+        y="50%" 
+        font="Gfx.FONT_XTINY" 
         justification="Gfx.TEXT_JUSTIFY_CENTER" 
-        color="Gfx.COLOR_WHITE" />
+        color="Gfx.COLOR_BLUE" />
     
     <!-- Time -->
     <label id="time_text" 
-        x="50%" 
-        y="80%" 
-        font="Gfx.FONT_MEDIUM" 
+        x="60%" 
+        y="70%" 
+        font="Gfx.FONT_XTINY" 
         justification="Gfx.TEXT_JUSTIFY_CENTER" 
         color="Gfx.COLOR_WHITE" />
 </layout>
