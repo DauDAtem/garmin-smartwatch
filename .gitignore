@@ -210,5 +210,6 @@ __marimo__/
 external-mir/
 internal-mir/
 bin/
+gen/
 *.prg
 *.prg.debug.xml
