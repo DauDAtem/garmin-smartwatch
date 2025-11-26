@@ -205,3 +205,9 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Garmin/Monkey C build artifacts
+external-mir/
+bin/
+*.prg
+*.prg.debug.xml
