@@ -208,6 +208,7 @@ __marimo__/
 
 # Garmin/Monkey C build artifacts
 external-mir/
+internal-mir/
 bin/
 *.prg
 *.prg.debug.xml
