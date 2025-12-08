@@ -1,30 +1,31 @@
 import Toybox.Application;
 import Toybox.Lang;
 import Toybox.WatchUi;
-import Toybox.Activity;
 
-class RedbackApp extends Application.AppBase {
-
+class GarminApp extends Application.AppBase {
     const MAX_BARS = 60;
     const BASELINE_AVG_CADENCE = 150;
     const HEIGHT_BASELINE = 170;
     const STEP_RATE = 6;
-    
-    // Vars for graph display
+
+    private var _idealMinCadence = 90;
+    private var _idealMaxCadence = 100;
     private var _zoneHistory as Array<Float?> = new [MAX_BARS]; // Store 60 data points (1 minutes at 1-second intervals)
+    
     private var _historyIndex = 0;
     private var _historyCount = 0;
     private var _historyTimer;
 
-    // Cadence vars
-    private var _minCadence = 100;
-    private var _maxCadence = 150;
+    enum {
+        Beginner = 0.96,
+        Intermediate = 1,
+        Advanced = 1.04
+    }
 
-    // Temp user data
+    //user info (testing with dummy value rn, implement user profile input later)
     private var _userHeight = 160;
     private var _userSpeed = 0;
-    private var _trainingLvl = :Beginner;
-
+    private var _trainingLvl = Beginner;
 
     function initialize() {
         AppBase.initialize();
@@ -32,13 +33,19 @@ class RedbackApp extends Application.AppBase {
 
     // onStart() is called on application start up
     function onStart(state as Dictionary?) as Void {
+        _historyTimer = new Timer.Timer();
+        _historyTimer.start(method(:updateZoneHistory), 1000, true);
     }
 
     // onStop() is called when your application is exiting
     function onStop(state as Dictionary?) as Void {
+        if (_historyTimer != null) {
+            _historyTimer.stop();
+        }
     }
 
-            // Zone history management
+
+    // Zone history management
     function updateZoneHistory() as Void {
         var info = Activity.getActivityInfo();
         
@@ -54,19 +61,19 @@ class RedbackApp extends Application.AppBase {
     }
 
     function getMinCadence() as Number {
-        return _minCadence;
+        return _idealMinCadence;
     }
-
+    
     function getMaxCadence() as Number {
-        return _maxCadence;
+        return _idealMaxCadence;
     }
 
-    function setMinCadence(val as Number) as Void {
-        _minCadence = val;
+    function setMinCadence(value as Number) as Void {
+        _idealMinCadence = value;
     }
 
-    function setMaxCadence(val as Number) as Void {
-        _maxCadence = val;
+    function setMaxCadence(value as Number) as Void {
+        _idealMaxCadence = value;
     }
 
     function getZoneHistory() as Array<Float?> {
@@ -81,14 +88,13 @@ class RedbackApp extends Application.AppBase {
         return _historyIndex;
     }
 
-
     // Return the initial view of your application here
     function getInitialView() as [Views] or [Views, InputDelegates] {
-        return [ new MainView(), new MainDelegate() ];
+        return [ new SimpleView(), new SimpleViewDelegate() ];
     }
 
 }
 
-function getApp() as RedbackApp {
-    return Application.getApp() as RedbackApp;
+function getApp() as GarminApp {
+    return Application.getApp() as GarminApp;
 }
