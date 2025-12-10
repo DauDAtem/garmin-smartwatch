@@ -3,10 +3,20 @@ import Toybox.WatchUi;
 
 class SimpleViewDelegate extends WatchUi.BehaviorDelegate {
 
-    var currentView = null;
+    private var _currentView = null;
 
      function initialize() {
         BehaviorDelegate.initialize();
+    }
+
+    function onMenu(){
+        //called by the timer after 1s hold
+        var menu = new WatchUi.Menu2({:resources => "menus/menu.xml"});
+
+        WatchUi.pushView(new Rez.Menus.MainMenu(), new SelectCadenceDelegate(menu), WatchUi.SLIDE_BLINK);
+
+        return true;
+
     }
 
 
@@ -19,13 +29,14 @@ class SimpleViewDelegate extends WatchUi.BehaviorDelegate {
         }
 
         if(key == WatchUi.KEY_DOWN){
-            currentView = new AdvancedView();
+            _currentView = new AdvancedView();
 
             // Switches the screen to advanced view by clocking down button
-            WatchUi.pushView(currentView, new AdvancedViewDelegate(currentView), WatchUi.SLIDE_DOWN);
+            WatchUi.pushView(_currentView, new AdvancedViewDelegate(_currentView), WatchUi.SLIDE_DOWN);
+            return true;
         }
 
-        return true;
+        return false;
     }
 
 
@@ -33,18 +44,20 @@ class SimpleViewDelegate extends WatchUi.BehaviorDelegate {
         var direction = SwipeEvent.getDirection();
             
         if (direction == WatchUi.SWIPE_UP) {
-            currentView = new AdvancedView(); 
+            _currentView = new AdvancedView(); 
             System.println("Swiped Down");
-            WatchUi.pushView(currentView, new AdvancedViewDelegate(currentView), WatchUi.SLIDE_DOWN);
+            WatchUi.pushView(_currentView, new AdvancedViewDelegate(_currentView), WatchUi.SLIDE_DOWN);
+            return true;
         }
 
         if(direction == WatchUi.SWIPE_LEFT){
-            currentView = new SettingsView();
+            _currentView = new SettingsView();
             System.println("Swiped Left");
-            WatchUi.pushView(currentView, new SettingsDelegate(currentView), WatchUi.SLIDE_LEFT);
+            WatchUi.pushView(_currentView, new SettingsDelegate(_currentView), WatchUi.SLIDE_LEFT);
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     function onBack(){

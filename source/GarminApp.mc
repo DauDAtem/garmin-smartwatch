@@ -5,7 +5,7 @@ import Toybox.WatchUi;
 class GarminApp extends Application.AppBase {
     const MAX_BARS = 60;
 
-    private var _idealMinCadence = 90;
+    private var _idealMinCadence = 80;
     private var _idealMaxCadence = 100;
     private var _cadenceIndex = 0;
     private var _cadenceCount = 0;
@@ -91,8 +91,9 @@ class GarminApp extends Application.AppBase {
     function getInitialView() as [Views] or [Views, InputDelegates] {
         return [ new SimpleView(), new SimpleViewDelegate() ];
     }
-}
 
+    
+}
 function getApp() as GarminApp {
     return Application.getApp() as GarminApp;
 }
