@@ -46,19 +46,13 @@ class AdvancedView extends WatchUi.View {
     function drawElements(dc as Dc) as Void {
         var width = dc.getWidth();
         var height = dc.getHeight();
-        var info = Activity.getActivityInfo();
         var app = getApp();
+        var info = Activity.getActivityInfo();
         
-        // Draw elapsed time at top (yellow RGB: 255,248,18 = 0xFFF, using picker in paint to get RGB then convert to hex
-        if (info != null && info.timerTime != null) {
-            var seconds = info.timerTime / 1000;
-            var hours = seconds / 3600;
-            var minutes = (seconds % 3600) / 60;
-            var secs = seconds % 60;
-            var timeStr = hours.format("%01d") + ":" + minutes.format("%02d") + "." + secs.format("%02d");
-            dc.setColor(0xFFF813, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(width / 2, 3, Graphics.FONT_LARGE, timeStr, Graphics.TEXT_JUSTIFY_CENTER);
-        }
+        // Draw timer status + elapsed time at top (yellow RGB: 255,248,18 = 0xFFF, using picker in paint to get RGB then convert to hex
+        var timeStr = app.getTimerStatusLabel() + " " + app.formatElapsedTime();
+        dc.setColor(0xFFF813, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(width / 2, 3, Graphics.FONT_LARGE, timeStr, Graphics.TEXT_JUSTIFY_CENTER);
         
         // Draw heart rate circle (left, dark red RGB: 211,19,2519
         var hrX = width / 4;

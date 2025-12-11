@@ -12,4 +12,7 @@
     <string id="menu_reset_zones">ReseT Zones</string>
     <string id="zone_in">In Zone</string>
     <string id="zone_out">OutZone</string>
+    <string id="timer_ready">Ready</string>
+    <string id="timer_running">Running</string>
+    <string id="timer_paused">Paused</string>
 </strings>

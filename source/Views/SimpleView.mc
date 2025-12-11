@@ -132,17 +132,10 @@ class SimpleView extends WatchUi.View {
             _distanceDisplay.setText("-- km");
         }
 
-        // Display elapsed time in HH:MM:SS format
-        if (info != null && info.timerTime != null){
-            var seconds = info.timerTime / 1000; // Convert milliseconds to seconds
-            var hours = seconds / 3600;
-            var minutes = (seconds % 3600) / 60;
-            var secs = seconds % 60;
-            _timeDisplay.setText(hours.format("%02d") + ":" + minutes.format("%02d") + ":" + secs.format("%02d"));
-        }else{
-            _timeDisplay.setText("--:--:--");
-        }
-        
+        // Display elapsed time in HH:MM:SS format using app timer
+        var app = getApp();
+        _timeDisplay.setText(app.getTimerStatusLabel() + " " + app.formatElapsedTime());
+
     }
 
 }
